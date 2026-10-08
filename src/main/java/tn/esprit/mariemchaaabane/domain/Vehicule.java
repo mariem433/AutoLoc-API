@@ -37,6 +37,4 @@ public class Vehicule {
             inverseJoinColumns = @JoinColumn(name = "id_equipement"))
     private List<Equipement> equipements = new ArrayList<>();
 
-    @OneToOne(mappedBy = "vehicule")
-    private Contrat contrat;
 }

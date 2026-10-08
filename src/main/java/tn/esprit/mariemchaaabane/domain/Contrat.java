@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Builder
@@ -21,10 +19,10 @@ public class Contrat {
     private boolean valide;
 
     @OneToOne
-    @JoinColumn(name = "id_vehicule", unique = true)
-    private Vehicule vehicule;
+    @JoinColumn(name = "contrat", unique = true)
+    private Reservation reservation;
 
-    @OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     Set<Paiement> paiements = new HashSet<>();
 }

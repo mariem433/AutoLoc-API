@@ -22,4 +22,7 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "id_vehicule")
     private Vehicule vehicule;
+
+    @OneToOne (mappedBy = "reservation" )
+    private Contrat contrat;
 }
