@@ -27,5 +27,5 @@ public class Paiement {
     private ModePaiement modePaiement;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private tn.esprit.autoloc.domain.Contrat contrat;
+    private Contrat contrat;
 }

@@ -38,5 +38,5 @@ public class Reservation {
     private Employe employe;
 
     @OneToOne(mappedBy = "reservation", fetch = FetchType.LAZY)
-    private tn.esprit.autoloc.domain.Contrat contrat;
+    private tn.esprit.mariemchaaabane.domain.Contrat contrat;
 }

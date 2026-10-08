@@ -1,4 +1,4 @@
-package tn.esprit.autoloc.domain;
+package tn.esprit.mariemchaaabane.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
