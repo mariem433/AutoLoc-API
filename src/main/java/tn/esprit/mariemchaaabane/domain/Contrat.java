@@ -5,8 +5,11 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@Builder
 @Entity
 @Table(name = "contrat")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
@@ -22,5 +25,6 @@ public class Contrat {
     private Vehicule vehicule;
 
     @OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Paiement> paiements = new ArrayList<>();
+    @Builder.Default
+    Set<Paiement> paiements = new HashSet<>();
 }
