@@ -8,15 +8,24 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "paiement")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@ToString(exclude = "contrat")
+@EqualsAndHashCode(exclude = "contrat")
 public class Paiement {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPaiement;
+
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal montant;
+
+    @Column(nullable = false)
     private LocalDate datePaiement;
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private ModePaiement modePaiement;
 
-    @ManyToOne
-    @JoinColumn(name = "id_contrat")
-    private Contrat contrat;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private tn.esprit.autoloc.domain.Contrat contrat;
 }
