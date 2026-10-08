@@ -27,5 +27,5 @@ public class Employe {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idAgence")
-    private tn.esprit.autoloc.domain.Agence agence;
+    private tn.esprit.mariemchaaabane.domain.Agence agence;
 }
