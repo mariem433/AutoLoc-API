@@ -1,12 +1,11 @@
 package tn.esprit.mariemchaaabane.service;
 
-import org.springframework.stereotype.Service;
 import tn.esprit.mariemchaaabane.domain.Vehicule;
 
 import java.util.List;
 
 
-public interface iVehiculeService {
+public interface IVehiculeService {
 
     Vehicule create(Vehicule behicule);
     Vehicule findById(Long id);

@@ -3,16 +3,16 @@ package tn.esprit.mariemchaaabane.service.impls;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.mariemchaaabane.domain.Vehicule;
-import tn.esprit.mariemchaaabane.repository.iVehiculeRepository;
-import tn.esprit.mariemchaaabane.service.iVehiculeService;
+import tn.esprit.mariemchaaabane.repository.IVehiculeRepository;
+import tn.esprit.mariemchaaabane.service.IVehiculeService;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 
-public class VehiculeServiceimpls implements iVehiculeService {
-    private iVehiculeRepository vehiculerepository;
+public class VehiculeServiceimpls implements IVehiculeService {
+    private IVehiculeRepository vehiculerepository;
     @Override
     public Vehicule create(Vehicule vehicule) {
         return vehiculerepository.save(vehicule);
