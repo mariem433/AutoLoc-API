@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 
 public class VehiculeServiceimpls implements IVehiculeService {
-    private IVehiculeRepository vehiculerepository;
+    private final IVehiculeRepository vehiculerepository;
     @Override
     public Vehicule create(Vehicule vehicule) {
         return vehiculerepository.save(vehicule);

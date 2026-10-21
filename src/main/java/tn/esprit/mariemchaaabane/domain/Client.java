@@ -1,5 +1,6 @@
 package tn.esprit.mariemchaaabane.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import tn.esprit.mariemchaaabane.domain.Reservation;
@@ -36,7 +37,7 @@ public class Client {
 
     @Column(nullable = false)
     private LocalDate dateInscription;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Reservation> reservations = new ArrayList<>();
 }

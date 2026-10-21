@@ -1,5 +1,6 @@
 package tn.esprit.mariemchaaabane.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import tn.esprit.mariemchaaabane.domain.Paiement;
@@ -31,10 +32,11 @@ public class Contrat {
     private boolean valide;
 
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "idReservation", nullable = false, unique = true)
+    @OneToOne
+    @JoinColumn(name = "id_reservation", nullable = false, unique = true)
     private Reservation reservation;
     @OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference("contrat-paiements")
     private List<Paiement> paiements = new ArrayList<>();
 
 

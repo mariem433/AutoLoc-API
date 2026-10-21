@@ -1,5 +1,6 @@
 package tn.esprit.mariemchaaabane.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -27,5 +28,7 @@ public class Paiement {
     private ModePaiement modePaiement;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_contrat")
+    @JsonBackReference("contrat-paiements")
     private Contrat contrat;
 }

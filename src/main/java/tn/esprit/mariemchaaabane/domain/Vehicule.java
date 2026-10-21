@@ -1,5 +1,6 @@
 package tn.esprit.mariemchaaabane.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -52,7 +53,7 @@ public class Vehicule {
     )
     private Set<Equipement> equipements = new HashSet<>();
 
-
+    @JsonIgnore
     @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Maintenance> maintenances = new ArrayList<>();
 }
