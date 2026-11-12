@@ -45,15 +45,15 @@ public class Vehicule {
     private Agence agence;
 
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "vehicule_equipement",
-            joinColumns        = @JoinColumn(name = "idVehicule"),
-            inverseJoinColumns = @JoinColumn(name = "idEquipement")
-    )
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+
     private Set<Equipement> equipements = new HashSet<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Maintenance> maintenances = new ArrayList<>();
+
+    public void setAgence(Agence agence) {
+        
+    }
 }

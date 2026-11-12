@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.mariemchaaabane.domain.Vehicule;
 import tn.esprit.mariemchaaabane.service.IVehiculeService;
+import tn.esprit.mariemchaaabane.service.impls.VehiculeServiceimpls;
 
 import java.util.List;
 
@@ -63,4 +64,26 @@ public class VehiculeRestController {
     public void deleteById(@Parameter(description = "Identifiant") @PathVariable Long id) {
         vehiculeService.deleteById(id);
     }
+
+    @PutMapping("{idVehicule}/{idAgence}")
+    public Vehicule assignAgence(@PathVariable Long idVehicule , @PathVariable Long idAgence ) {
+                                 return vehiculeService.assignAgence(idVehicule, idAgence);
+}
+    @PutMapping("/{idVehicule}/equipements/{idEquipement}")
+    public Vehicule assignEquipement(@PathVariable Long idVehicule, @PathVariable Long idEquipement) {
+        return vehiculeService.assignEquipement(idVehicule, idEquipement);
+    }
+
+    @DeleteMapping("/{idVehicule}/equipements/{idEquipement}")
+    public Vehicule unassignEquipement(@PathVariable Long idVehicule, @PathVariable Long idEquipement) {
+        return vehiculeService.unassignEquipement(idVehicule, idEquipement);
+    }
+
+    @PostMapping("/agence/{idAgence}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Vehicule addAndAssignAgence(@RequestBody Vehicule vehicule, @PathVariable Long idAgence) {
+        return vehiculeService.addAndAssignAgence(vehicule, idAgence);
+    }
+
+
 }

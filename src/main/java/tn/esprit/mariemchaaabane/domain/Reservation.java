@@ -39,4 +39,6 @@ public class Reservation {
 
     @OneToOne(mappedBy = "reservation", fetch = FetchType.LAZY)
     private tn.esprit.mariemchaaabane.domain.Contrat contrat;
+
+
 }

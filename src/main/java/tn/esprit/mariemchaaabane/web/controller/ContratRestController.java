@@ -63,4 +63,14 @@ public class ContratRestController {
     public void deleteById(@Parameter(description = "Identifiant") @PathVariable Long id) {
         contratService.deleteById(id);
     }
+
+    @Operation(summary = "Créer un contrat avec ses paiements")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Contrat et paiements créés"),
+            @ApiResponse(responseCode = "400", description = "Données invalides") })
+    @PostMapping("/with-paiements")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Contrat addWithPayments(@RequestBody Contrat c) {
+        return contratService.addWithPayments(c);
+    }
 }
