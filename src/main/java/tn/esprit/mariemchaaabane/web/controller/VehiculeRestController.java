@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import tn.esprit.mariemchaaabane.domain.Vehicule;
 import tn.esprit.mariemchaaabane.service.IVehiculeService;
 import tn.esprit.mariemchaaabane.service.impls.VehiculeServiceimpls;
+import tn.esprit.mariemchaaabane.web.DTO.VehiculeDTO;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class VehiculeRestController {
     @Operation(summary = "Lister les véhicules")
     @ApiResponse(responseCode = "200", description = "Liste des véhicules")
     @GetMapping
-    public List<Vehicule> findAll() { return vehiculeService.findAll(); }
+    public List<VehiculeDTO> findAll() { return vehiculeService.findAll(); }
 
     @Operation(summary = "Consulter un véhicule")
     @ApiResponses({

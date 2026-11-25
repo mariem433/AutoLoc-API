@@ -63,8 +63,8 @@ public class ContratServiceImpl implements IContratService {
         }
         contratRepository.deleteById(id);
     }
-    public Contrat addWithPayment(Contrat contart) {
-        return null;
+    public Contrat addWithPayment(Contrat contrat) {
+        return contratRepository.save(contrat);
     }
     @Override
     @Transactional

@@ -7,8 +7,8 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "reservation")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@ToString(exclude = {"client", "vehicule", "employe", "contrat"})
-@EqualsAndHashCode(exclude = {"client", "vehicule", "employe", "contrat"})
+@ToString(exclude = {"client", "vehicule", "contrat"})
+@EqualsAndHashCode(exclude = {"client", "vehicule", "contrat"})
 public class Reservation {
 
     @Id
@@ -32,10 +32,6 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idVehicule", nullable = false)
     private Vehicule vehicule;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idEmploye")
-    private Employe employe;
 
     @OneToOne(mappedBy = "reservation", fetch = FetchType.LAZY)
     private tn.esprit.mariemchaaabane.domain.Contrat contrat;

@@ -12,8 +12,8 @@ import java.util.Set;
 @Entity
 @Table(name = "vehicule")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@ToString(exclude = {"agence", "equipements", "maintenances"})
-@EqualsAndHashCode(exclude = {"agence", "equipements", "maintenances"})
+@ToString(exclude = {"agence", "equipements", "reservations"})
+@EqualsAndHashCode(exclude = {"agence", "equipements", "reservations"})
 public class Vehicule {
 
     @Id
@@ -46,14 +46,14 @@ public class Vehicule {
 
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-
+    @JoinTable(
+            name = "vehicule_equipement",
+            joinColumns        = @JoinColumn(name = "idVehicule"),
+            inverseJoinColumns = @JoinColumn(name = "idEquipement")
+    )
     private Set<Equipement> equipements = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private List<Maintenance> maintenances = new ArrayList<>();
-
-    public void setAgence(Agence agence) {
-        
-    }
+    @OneToMany(mappedBy = "vehicule", fetch = FetchType.LAZY)
+    private List<Reservation> reservations = new ArrayList<>();
 }

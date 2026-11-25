@@ -10,11 +10,13 @@ import tn.esprit.mariemchaaabane.exception.ResourceNotFoundException;
 import tn.esprit.mariemchaaabane.repository.IAgenceRepository;
 import tn.esprit.mariemchaaabane.repository.IVehiculeRepository;
 import tn.esprit.mariemchaaabane.service.IVehiculeService;
+import tn.esprit.mariemchaaabane.web.DTO.VehiculeDTO;
 import tn.esprit.mariemchaaabane.web.controller.AgenceRestController;
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.mariemchaaabane.domain.Equipement;
 import tn.esprit.mariemchaaabane.repository.IEquipementRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,8 +45,25 @@ public class VehiculeServiceimpls implements IVehiculeService {
     }
 
     @Override
-    public List<Vehicule> findAll() {
-        return vehiculerepository.findAll();
+    public List<VehiculeDTO> findAll() {
+        List<VehiculeDTO> vehiculeDTOS = new ArrayList<>();
+        for (Vehicule vehicule : vehiculerepository.findAll()){
+            vehiculeDTOS.add(toDTO(vehicule));
+        }
+
+        return vehiculeDTOS;
+    }
+
+    @Override
+    public VehiculeDTO toDTO(Vehicule vehicule) {
+        VehiculeDTO vehiculeDTO= new VehiculeDTO();
+        vehiculeDTO.setImatriculation(vehicule.getImmatriculation());
+        vehiculeDTO.setCategorie(vehicule.getCategorie());
+        vehiculeDTO.setMarque(vehicule.getMarque());
+        vehiculeDTO.setTarifJournalier(vehicule.getTarifJournalier());
+        vehiculeDTO.setModele(vehicule.getModele());
+        vehiculeDTO.setNomAgence(vehicule.getAgence().getNom());
+        return null;
     }
 
     @Override

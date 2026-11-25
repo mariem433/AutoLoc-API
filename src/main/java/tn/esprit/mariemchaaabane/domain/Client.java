@@ -37,8 +37,6 @@ public class Client {
 
     @Column(nullable = false)
     private LocalDate dateInscription;
-    @Enumerated (EnumType.STRING)
-    TypeClient typeClient;
 
     @JsonIgnore
     @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
