@@ -63,7 +63,7 @@ public class VehiculeServiceimpls implements IVehiculeService {
         vehiculeDTO.setTarifJournalier(vehicule.getTarifJournalier());
         vehiculeDTO.setModele(vehicule.getModele());
         vehiculeDTO.setNomAgence(vehicule.getAgence().getNom());
-        return null;
+        return vehiculeDTO;
     }
 
     @Override

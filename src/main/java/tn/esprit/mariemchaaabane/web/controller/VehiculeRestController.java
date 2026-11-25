@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.mariemchaaabane.domain.Vehicule;
 import tn.esprit.mariemchaaabane.service.IVehiculeService;
-import tn.esprit.mariemchaaabane.service.impls.VehiculeServiceimpls;
 import tn.esprit.mariemchaaabane.web.DTO.VehiculeDTO;
 
 import java.util.List;
@@ -33,8 +32,8 @@ public class VehiculeRestController {
             @ApiResponse(responseCode = "200", description = "Véhicule trouvé"),
             @ApiResponse(responseCode = "404", description = "Véhicule introuvable") })
     @GetMapping("/{id}")
-    public Vehicule findById(@Parameter(description = "Identifiant") @PathVariable Long id) {
-        return vehiculeService.findById(id);
+    public VehiculeDTO findById(@Parameter(description = "Identifiant") @PathVariable Long id) {
+        return vehiculeService.toDTO(vehiculeService.findById(id));
     }
 
     @Operation(summary = "Créer un véhicule")
@@ -43,7 +42,8 @@ public class VehiculeRestController {
             @ApiResponse(responseCode = "400", description = "Données invalides") })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Vehicule create(@RequestBody Vehicule vehicule) { return vehiculeService.create(vehicule); }
+    public VehiculeDTO create(@RequestBody Vehicule vehicule) { return vehiculeService.toDTO(vehiculeService.create(vehicule));
+    }
 
     @Operation(summary = "Modifier un véhicule")
     @ApiResponses({
@@ -51,9 +51,9 @@ public class VehiculeRestController {
             @ApiResponse(responseCode = "404", description = "Véhicule introuvable"),
             @ApiResponse(responseCode = "400", description = "Données invalides") })
     @PutMapping("/{id}")
-    public Vehicule update(@Parameter(description = "Identifiant") @PathVariable Long id,
-                           @RequestBody Vehicule vehicule) {
-        return vehiculeService.update( vehicule);
+    public VehiculeDTO update(@Parameter(description = "Identifiant") @PathVariable Long id,
+                              @RequestBody Vehicule vehicule) {
+        return vehiculeService.toDTO(vehiculeService.update( vehicule));
     }
 
     @Operation(summary = "Supprimer un véhicule")
@@ -67,23 +67,23 @@ public class VehiculeRestController {
     }
 
     @PutMapping("{idVehicule}/{idAgence}")
-    public Vehicule assignAgence(@PathVariable Long idVehicule , @PathVariable Long idAgence ) {
-                                 return vehiculeService.assignAgence(idVehicule, idAgence);
-}
+    public VehiculeDTO assignAgence(@PathVariable Long idVehicule , @PathVariable Long idAgence ) {
+        return vehiculeService.toDTO(vehiculeService.assignAgence(idVehicule, idAgence));
+    }
     @PutMapping("/{idVehicule}/equipements/{idEquipement}")
-    public Vehicule assignEquipement(@PathVariable Long idVehicule, @PathVariable Long idEquipement) {
-        return vehiculeService.assignEquipement(idVehicule, idEquipement);
+    public VehiculeDTO assignEquipement(@PathVariable Long idVehicule, @PathVariable Long idEquipement) {
+        return vehiculeService.toDTO(vehiculeService.assignEquipement(idVehicule, idEquipement));
     }
 
     @DeleteMapping("/{idVehicule}/equipements/{idEquipement}")
-    public Vehicule unassignEquipement(@PathVariable Long idVehicule, @PathVariable Long idEquipement) {
-        return vehiculeService.unassignEquipement(idVehicule, idEquipement);
+    public VehiculeDTO unassignEquipement(@PathVariable Long idVehicule, @PathVariable Long idEquipement) {
+        return vehiculeService.toDTO(vehiculeService.unassignEquipement(idVehicule, idEquipement));
     }
 
     @PostMapping("/agence/{idAgence}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Vehicule addAndAssignAgence(@RequestBody Vehicule vehicule, @PathVariable Long idAgence) {
-        return vehiculeService.addAndAssignAgence(vehicule, idAgence);
+    public VehiculeDTO addAndAssignAgence(@RequestBody Vehicule vehicule, @PathVariable Long idAgence) {
+        return vehiculeService.toDTO(vehiculeService.addAndAssignAgence(vehicule, idAgence));
     }
 
 
