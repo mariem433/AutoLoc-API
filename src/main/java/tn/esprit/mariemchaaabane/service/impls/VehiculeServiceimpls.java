@@ -1,105 +1,172 @@
 package tn.esprit.mariemchaaabane.service.impls;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.mariemchaaabane.domain.Agence;
+import tn.esprit.mariemchaaabane.domain.CategorieVehicule;
+import tn.esprit.mariemchaaabane.domain.StatutVehicule;
 import tn.esprit.mariemchaaabane.domain.Vehicule;
+import tn.esprit.mariemchaaabane.exception.ImmatriculationDejaUtiliseeException;
 import tn.esprit.mariemchaaabane.exception.ResourceNotFoundException;
 import tn.esprit.mariemchaaabane.repository.IAgenceRepository;
 import tn.esprit.mariemchaaabane.repository.IVehiculeRepository;
 import tn.esprit.mariemchaaabane.service.IVehiculeService;
-import tn.esprit.mariemchaaabane.web.DTO.VehiculeDTO;
-import tn.esprit.mariemchaaabane.web.controller.AgenceRestController;
-import org.springframework.transaction.annotation.Transactional;
-import tn.esprit.mariemchaaabane.domain.Equipement;
-import tn.esprit.mariemchaaabane.repository.IEquipementRepository;
+import tn.esprit.mariemchaaabane.web.DTO.NbVehiculesAgenceDTO;
+import tn.esprit.mariemchaaabane.web.DTO.VehiculeRequestDTO;
+import tn.esprit.mariemchaaabane.web.DTO.VehiculeResponseDTO;
+import tn.esprit.mariemchaaabane.web.DTO.VehiculeResumeDTO;
+import tn.esprit.mariemchaaabane.web.mapper.VehiculeMapper;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
 public class VehiculeServiceimpls implements IVehiculeService {
-    private final IVehiculeRepository vehiculerepository;
+
+    private final IVehiculeRepository vehiculeRepository;
     private final IAgenceRepository agenceRepository;
-    private final IEquipementRepository equipementRepository;
+    private final VehiculeMapper vehiculeMapper;
+
+
+
     @Override
-    public Vehicule create(Vehicule vehicule) {
-        return vehiculerepository.save(vehicule);
+    @Transactional(readOnly = true)
+    public VehiculeResponseDTO findById(Long id) {
+
+        Vehicule vehicule = vehiculeRepository.findByIdAvecEquipements(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicule", id));
+        return vehiculeMapper.toDto(vehicule);
     }
 
     @Override
-    public Vehicule findById(Long id) {
-        return vehiculerepository.findById(id).orElseThrow(() -> new RuntimeException("vehicule not found"));
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findAll() {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findAll());
     }
 
     @Override
-    public Vehicule assignAgence(Long idVehicule, Long idAgence) {
-        Vehicule vehicule = findById(idVehicule);
-        Agence agence = agenceRepository.findById(idAgence).orElseThrow(() -> new ResourceNotFoundException("Agence" , idAgence));
-        vehicule.setAgence(agence);
-        return vehiculerepository.save(vehicule);
-    }
+    @Transactional
+    public VehiculeResponseDTO create(VehiculeRequestDTO dto) {
 
-    @Override
-    public List<VehiculeDTO> findAll() {
-        List<VehiculeDTO> vehiculeDTOS = new ArrayList<>();
-        for (Vehicule vehicule : vehiculerepository.findAll()){
-            vehiculeDTOS.add(toDTO(vehicule));
+        if (vehiculeRepository.existsByImmatriculation(dto.immatriculation())) {
+            throw new ImmatriculationDejaUtiliseeException(dto.immatriculation());
         }
 
-        return vehiculeDTOS;
-    }
 
-    @Override
-    public VehiculeDTO toDTO(Vehicule vehicule) {
-        VehiculeDTO vehiculeDTO= new VehiculeDTO();
-        vehiculeDTO.setImatriculation(vehicule.getImmatriculation());
-        vehiculeDTO.setCategorie(vehicule.getCategorie());
-        vehiculeDTO.setMarque(vehicule.getMarque());
-        vehiculeDTO.setTarifJournalier(vehicule.getTarifJournalier());
-        vehiculeDTO.setModele(vehicule.getModele());
-        vehiculeDTO.setNomAgence(vehicule.getAgence().getNom());
-        return vehiculeDTO;
-    }
+        Vehicule vehicule = vehiculeMapper.toEntity(dto);
 
-    @Override
-    public void deleteById(Long id) {
-        vehiculerepository.deleteById(id);
 
-    }
-
-    @Override
-    public Vehicule update(Vehicule vehicule) {
-        return vehiculerepository.save(vehicule);
-    }
-    @Override
-    public  Vehicule assignEquipement(Long idVehicule, Long idEquipement) {
-        Vehicule vehicule = findById(idVehicule);
-        Equipement equipement = equipementRepository.findById(idEquipement)
-                .orElseThrow(() -> new ResourceNotFoundException("Equipement", idEquipement));
-        vehicule.getEquipements().add(equipement);
-        return vehiculerepository.save(vehicule);
-    }
-
-    @Override
-    public  Vehicule unassignEquipement(Long idVehicule, Long idEquipement) {
-        Vehicule vehicule = findById(idVehicule);
-        Equipement equipement = equipementRepository.findById(idEquipement)
-                .orElseThrow(() -> new ResourceNotFoundException("Equipement", idEquipement));
-        vehicule.getEquipements().remove(equipement);
-        return vehiculerepository.save(vehicule);
-    }
-
-    @Override
-    public Vehicule addAndAssignAgence(Vehicule vehicule, Long idAgence) {
-        Agence agence = agenceRepository.findById(idAgence)
-                .orElseThrow(() -> new ResourceNotFoundException("Agence", idAgence));
+        Agence agence = agenceRepository.findById(dto.agenceId())
+                .orElseThrow(() -> new ResourceNotFoundException("Agence", dto.agenceId()));
         vehicule.setAgence(agence);
-        return vehiculerepository.save(vehicule);
+        agence.getVehicules().add(vehicule);
+        return vehiculeMapper.toDto(vehiculeRepository.save(vehicule));
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findByMarque(String marque) {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findByMarque(marque));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findByCategorieAndStatut(CategorieVehicule categorie, StatutVehicule statut) {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findByCategorieAndStatut(categorie, statut));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findByTarifBetween(BigDecimal min, BigDecimal max) {
+        return vehiculeMapper.toResumeDtoList(
+                vehiculeRepository.findByTarifJournalierBetweenOrderByTarifJournalierAsc(min, max));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findByModeleContenant(String motCle) {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findByModeleContainingIgnoreCase(motCle));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findByCategories(List<CategorieVehicule> categories) {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findByCategorieIn(categories));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByImmatriculation(String immatriculation) {
+        return vehiculeRepository.existsByImmatriculation(immatriculation);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countByStatut(StatutVehicule statut) {
+        return vehiculeRepository.countByStatut(statut);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findTop3MoinsChers() {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findTop3ByOrderByTarifJournalierAsc());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findByAgence(Long agenceId) {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findByAgenceIdAgence(agenceId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findSansAgence() {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findByAgenceIsNull());
+    }
+
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findByVilleAgence(String ville) {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findByVilleAgence(ville));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findByEquipement(String libelle) {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findByEquipement(libelle));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findAvecAuMoinsNEquipements(long n) {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findAvecAuMoinsNEquipements(n));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findReservesParClient(Long clientId) {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findReservesParClient(clientId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findJamaisReserves() {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findJamaisReserves());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeResumeDTO> findEnMaintenanceLe(LocalDate date) {
+        return vehiculeMapper.toResumeDtoList(vehiculeRepository.findEnMaintenanceLe(date));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<NbVehiculesAgenceDTO> compterParAgence() {
+        return vehiculeRepository.compterParAgence();
+    }
+}

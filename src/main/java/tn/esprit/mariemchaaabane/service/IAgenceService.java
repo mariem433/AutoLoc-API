@@ -10,4 +10,10 @@ public interface IAgenceService {
     List<Agence> findAll();
     Agence update(Long id, Agence agence);
     void deleteById(Long id);
+
+
+    List<Agence> getByVilleAndAdresse(String ville, String adresse);
+
+    Agence getByNom(String nom);
+
 }

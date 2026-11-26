@@ -57,4 +57,15 @@ public class AgenceServiceImpl implements IAgenceService {
         }
         agenceRepository.deleteById(id);
     }
+
+
+    @Override
+    public List<Agence> getByVilleAndAdresse(String ville, String adresse) {
+        return agenceRepository.findByVilleContainingIgnoreCaseAndAdresse(ville , adresse);
+    }
+
+    @Override
+    public Agence getByNom(String nom) {
+        return agenceRepository.findByNom(nom);
+    }
 }

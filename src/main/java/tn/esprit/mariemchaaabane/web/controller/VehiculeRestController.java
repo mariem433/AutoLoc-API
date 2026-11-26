@@ -1,20 +1,23 @@
 package tn.esprit.mariemchaaabane.web.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tn.esprit.mariemchaaabane.domain.Vehicule;
+import tn.esprit.mariemchaaabane.domain.CategorieVehicule;
+import tn.esprit.mariemchaaabane.domain.StatutVehicule;
 import tn.esprit.mariemchaaabane.service.IVehiculeService;
-import tn.esprit.mariemchaaabane.web.DTO.VehiculeDTO;
+import tn.esprit.mariemchaaabane.web.DTO.NbVehiculesAgenceDTO;
+import tn.esprit.mariemchaaabane.web.DTO.VehiculeRequestDTO;
+import tn.esprit.mariemchaaabane.web.DTO.VehiculeResponseDTO;
+import tn.esprit.mariemchaaabane.web.DTO.VehiculeResumeDTO;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
-@Tag(name = "Vehicules", description = "Gestion des véhicules")
 @RestController
 @RequestMapping("/vehicules")
 @RequiredArgsConstructor
@@ -22,69 +25,108 @@ public class VehiculeRestController {
 
     private final IVehiculeService vehiculeService;
 
-    @Operation(summary = "Lister les véhicules")
-    @ApiResponse(responseCode = "200", description = "Liste des véhicules")
     @GetMapping
-    public List<VehiculeDTO> findAll() { return vehiculeService.findAll(); }
+    public List<VehiculeResumeDTO> findAll() {
+        return vehiculeService.findAll();
+    }
 
-    @Operation(summary = "Consulter un véhicule")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Véhicule trouvé"),
-            @ApiResponse(responseCode = "404", description = "Véhicule introuvable") })
     @GetMapping("/{id}")
-    public VehiculeDTO findById(@Parameter(description = "Identifiant") @PathVariable Long id) {
-        return vehiculeService.toDTO(vehiculeService.findById(id));
+    public VehiculeResponseDTO findById(@PathVariable Long id) {
+        return vehiculeService.findById(id);
     }
 
-    @Operation(summary = "Créer un véhicule")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Véhicule créé"),
-            @ApiResponse(responseCode = "400", description = "Données invalides") })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public VehiculeDTO create(@RequestBody Vehicule vehicule) { return vehiculeService.toDTO(vehiculeService.create(vehicule));
-    }
+    public ResponseEntity<VehiculeResponseDTO> create(@Valid @RequestBody VehiculeRequestDTO dto) {
 
-    @Operation(summary = "Modifier un véhicule")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Véhicule modifié"),
-            @ApiResponse(responseCode = "404", description = "Véhicule introuvable"),
-            @ApiResponse(responseCode = "400", description = "Données invalides") })
-    @PutMapping("/{id}")
-    public VehiculeDTO update(@Parameter(description = "Identifiant") @PathVariable Long id,
-                              @RequestBody Vehicule vehicule) {
-        return vehiculeService.toDTO(vehiculeService.update( vehicule));
-    }
-
-    @Operation(summary = "Supprimer un véhicule")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Véhicule supprimé"),
-            @ApiResponse(responseCode = "404", description = "Véhicule introuvable") })
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@Parameter(description = "Identifiant") @PathVariable Long id) {
-        vehiculeService.deleteById(id);
-    }
-
-    @PutMapping("{idVehicule}/{idAgence}")
-    public VehiculeDTO assignAgence(@PathVariable Long idVehicule , @PathVariable Long idAgence ) {
-        return vehiculeService.toDTO(vehiculeService.assignAgence(idVehicule, idAgence));
-    }
-    @PutMapping("/{idVehicule}/equipements/{idEquipement}")
-    public VehiculeDTO assignEquipement(@PathVariable Long idVehicule, @PathVariable Long idEquipement) {
-        return vehiculeService.toDTO(vehiculeService.assignEquipement(idVehicule, idEquipement));
-    }
-
-    @DeleteMapping("/{idVehicule}/equipements/{idEquipement}")
-    public VehiculeDTO unassignEquipement(@PathVariable Long idVehicule, @PathVariable Long idEquipement) {
-        return vehiculeService.toDTO(vehiculeService.unassignEquipement(idVehicule, idEquipement));
-    }
-
-    @PostMapping("/agence/{idAgence}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public VehiculeDTO addAndAssignAgence(@RequestBody Vehicule vehicule, @PathVariable Long idAgence) {
-        return vehiculeService.toDTO(vehiculeService.addAndAssignAgence(vehicule, idAgence));
+        return ResponseEntity.status(HttpStatus.CREATED).body(vehiculeService.create(dto));
     }
 
 
+
+    @GetMapping("/recherche/marque/{marque}")
+    public List<VehiculeResumeDTO> findByMarque(@PathVariable String marque) {
+        return vehiculeService.findByMarque(marque);
+    }
+
+    @GetMapping("/recherche/categorie/{categorie}/statut/{statut}")
+    public List<VehiculeResumeDTO> findByCategorieAndStatut(@PathVariable CategorieVehicule categorie,
+                                                            @PathVariable StatutVehicule statut) {
+        return vehiculeService.findByCategorieAndStatut(categorie, statut);
+    }
+
+    @GetMapping("/recherche/tarif/{min}/{max}")
+    public List<VehiculeResumeDTO> findByTarifBetween(@PathVariable BigDecimal min, @PathVariable BigDecimal max) {
+        return vehiculeService.findByTarifBetween(min, max);
+    }
+
+    @GetMapping("/recherche/modele/{motCle}")
+    public List<VehiculeResumeDTO> findByModeleContenant(@PathVariable String motCle) {
+        return vehiculeService.findByModeleContenant(motCle);
+    }
+
+    @GetMapping("/recherche/categories/{categories}")
+    public List<VehiculeResumeDTO> findByCategories(@PathVariable List<CategorieVehicule> categories) {
+        return vehiculeService.findByCategories(categories);
+    }
+
+    @GetMapping("/recherche/existe/{immatriculation}")
+    public boolean existsByImmatriculation(@PathVariable String immatriculation) {
+        return vehiculeService.existsByImmatriculation(immatriculation);
+    }
+
+    @GetMapping("/recherche/nombre/statut/{statut}")
+    public long countByStatut(@PathVariable StatutVehicule statut) {
+        return vehiculeService.countByStatut(statut);
+    }
+
+    @GetMapping("/recherche/moins-chers")
+    public List<VehiculeResumeDTO> findTop3MoinsChers() {
+        return vehiculeService.findTop3MoinsChers();
+    }
+
+    @GetMapping("/recherche/agence/{agenceId}")
+    public List<VehiculeResumeDTO> findByAgence(@PathVariable Long agenceId) {
+        return vehiculeService.findByAgence(agenceId);
+    }
+
+    @GetMapping("/recherche/sans-agence")
+    public List<VehiculeResumeDTO> findSansAgence() {
+        return vehiculeService.findSansAgence();
+    }
+
+    @GetMapping("/ville/{ville}")
+    public List<VehiculeResumeDTO> findByVilleAgence(@PathVariable String ville) {
+        return vehiculeService.findByVilleAgence(ville);
+    }
+
+    @GetMapping("/equipement/{libelle}")
+    public List<VehiculeResumeDTO> findByEquipement(@PathVariable String libelle) {
+        return vehiculeService.findByEquipement(libelle);
+    }
+
+    @GetMapping("/equipements/min/{n}")
+    public List<VehiculeResumeDTO> findAvecAuMoinsNEquipements(@PathVariable long n) {
+        return vehiculeService.findAvecAuMoinsNEquipements(n);
+    }
+
+    @GetMapping("/client/{clientId}")
+    public List<VehiculeResumeDTO> findReservesParClient(@PathVariable Long clientId) {
+        return vehiculeService.findReservesParClient(clientId);
+    }
+
+    @GetMapping("/jamais-reserves")
+    public List<VehiculeResumeDTO> findJamaisReserves() {
+        return vehiculeService.findJamaisReserves();
+    }
+
+    @GetMapping("/maintenance/{date}")
+    public List<VehiculeResumeDTO> findEnMaintenanceLe(
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return vehiculeService.findEnMaintenanceLe(date);
+    }
+
+    @GetMapping("/stats/par-agence")
+    public List<NbVehiculesAgenceDTO> compterParAgence() {
+        return vehiculeService.compterParAgence();
+    }
 }
